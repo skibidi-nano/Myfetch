@@ -1,31 +1,31 @@
 #include "myfetch.h"
+#include "meminfo.h"
 
 
 int main(void)
 {
 
-    
-    char buffer[2048];
-
     //currently opened: meminfo
-    int fd = open("/proc/meminfo", O_RDONLY);
-
-    if (fd < 0) 
+    int mem_fd = open("/proc/meminfo", O_RDONLY);
+    if (mem_fd < 0) 
     {
         printf("ERRROR: MemInfo fike couldn't be accessed");
         return 1;
     }
-    ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
 
-    if (bytes_read > 0) 
+    int cpu_fd = open("/proc/cpuinfo", O_RDONLY);
+    if (cpu_fd < 0) 
     {
-        buffer[bytes_read] = '\0';
+        printf("ERRROR: CPUInfo fike couldn't be accessed");
+        return 1;
     }
-    close(fd);
+
+    memory_fetch(mem_fd);
+    cpu_fetch(cpu_fd);
 
 
-
-
-
+    
+    close(mem_fd);
+    close(cpu_fd);
     return 0;
 }
