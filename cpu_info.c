@@ -1,58 +1,122 @@
 #include "cpu_info.h"
 #include "myfetch.h"
+#include "helper.h"
 
-void cpu_info(int fd)
+int cpu_fetch(int fd)
 {
+    float size_buffer = BUFFER_SIZE;
     char buffer[BUFFER_SIZE];
-    static char string_buffer[32]; //will change from magic number
-    static char number_buffer[32];
-    int nmbr_buffer_index = 0;
-    int str_buffer_index = 0;
-    bool number_write_check = false;
+    char string_buffer[SECONDARY_BUFFER_SIZE]; //static value 
+    char line_buffer[SECONDARY_BUFFER_SIZE]; //whole line
+    char read_buffer[SECONDARY_BUFFER_SIZE]; //dynamic value (the things we are actually looking for)
+    int line_buffer_index = 0;
+    int strlength;
+    int length_string_buffer;
 
-    ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+    char* print_string; 
+    int text_y = 0;
 
-    if (bytes_read <= 0) {
-        return;
-    }
-    buffer[bytes_read] = '\0';
-
-    for (int i = 0; i < bytes_read; i++)
+    parse_mapping mappings[] = 
     {
-        if (isalnum(buffer[i]))
-        {
-            string_buffer[str_buffer_index] = buffer[i];
-            str_buffer_index++;
-        }
-        else if(buffer[i] == ' ' && buffer[i - 1] != ' ')
-        {
-            if (!strcmp(string_buffer, "model name"))
-            {
-                number_write_check = true;
-                printf("Model name - ");
-            }
-        }
-        else if(buffer[i] == '\n')
-        {
-            number_buffer[nmbr_buffer_index] = '\0';
-            str_buffer_index = 0;
-            nmbr_buffer_index = 0;
+    //Codeword    Whats printed      y-offset
+    //.key         .label        .offset
+    {"processor\t:",    "Threads - ",      PROCESSOR_OFFSET},
+    {"model name\t:",   "Processor -",  MODEL_NAME_OFFSET},
+    };
+    int num_mappings = sizeof(mappings) / sizeof(mappings[0]);
 
-            double number_value = atol(number_buffer);
-            number_value /= 1024 * 1024;
-            if(number_write_check)
-            {
-                printf("%.2f GiB", number_value);
-                printf("\n");
-            }
+    static long long filesize;
+    filesize = get_file_size_stat(fd);
+    lseek(fd, 0, SEEK_SET); // reset file descriptor
+    if (filesize == -1)
+    {
+        return 1;
+    }
 
-            number_write_check = false;
-        }
-        
-        if(isdigit(buffer[i]) && number_write_check)
+    if (filesize > 2048)
+    {
+        double iterations = round(filesize / size_buffer);
+        for (int iteration = 0; iteration < iterations; iteration++)
         {
-            number_buffer[nmbr_buffer_index] = buffer[i];
-            nmbr_buffer_index++;
+            ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+            if (bytes_read <= 0) 
+            {
+                return 1;
+            }
+            buffer[bytes_read] = '\0';
+
+            
+            for (int i = 0; i < bytes_read; i++)
+            {
+                line_buffer[line_buffer_index] = buffer[i];
+
+                if(line_buffer[line_buffer_index] == '\n')
+                {
+                    line_buffer[line_buffer_index] = '\0';
+                    line_buffer_index = 0;
+
+                    strlength = strlen(line_buffer);
+                    for (int j = 0; j < strlength; j++)
+                    {
+                        string_buffer[j] = line_buffer[j];
+
+                        if(string_buffer[j] == ':')
+                        {
+                            string_buffer[j] = line_buffer[j];
+                            string_buffer[j + 1] = '\0';
+                            break;
+                        }
+                    }
+                
+
+                    for (int j = 0; j < num_mappings; j++)
+                    {
+
+                        if(!strcmp(string_buffer, mappings[j].key))
+                        {
+                            strlength = (strlen(line_buffer) - strlen(string_buffer));
+                            length_string_buffer = strlen(string_buffer);
+                            for (int k = 0; k < strlength; k++)
+                            {
+                                read_buffer[k] = line_buffer[k + length_string_buffer];
+                            }
+
+                            read_buffer[strlength] = '\0';
+
+
+                            offset = mappings[j].y_offset; //manipulte the global offset (maybe overall change the offset concept)
+                            text_y = TEXT_Y_INIT + offset; // calculate the y variable
+
+
+                            print_string = mappings[j].label;
+                            mvprintw(text_y, TEXT_X, "%s", print_string);
+
+                            if (!strcmp(mappings[j].label, "Threads - "))
+                            {
+                                int cores = atoi(read_buffer); 
+                                cores++;
+                                mvprintw(text_y, TEXT_X + strlen(print_string), "%i", cores);
+                            }
+                            else
+                            {
+                                mvprintw(text_y, TEXT_X + strlen(print_string), "%s", read_buffer);
+                            }
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    line_buffer_index++;
+                }
+                
+            }
         }
     }
+    
+
+    
+
+
+    return 0;
 }

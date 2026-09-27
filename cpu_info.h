@@ -3,4 +3,5 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-void cpu_info(int fd)
+
+int cpu_fetch(int fd);
