@@ -1,7 +1,9 @@
 #include "myfetch.h"
 #include "meminfo.h"
 #include "cpu_info.h"
-#include "logo.h"
+#include "distro.h"
+#include "host.h"
+#include "disk.h"
 
 
 int main(void)
@@ -9,6 +11,10 @@ int main(void)
 
     int cpu_check = 0;
     int distro_check = 0;
+    int hostname_check = 0;
+    int kernel_check = 0;
+    int disk_check = 0;
+
     initscr();
     cbreak();
     noecho();
@@ -17,14 +23,14 @@ int main(void)
     int mem_fd = open("/proc/meminfo", O_RDONLY);
     if (mem_fd < 0) 
     {
-        perror("ERRROR: MemInfo file couldn't be accessed");
+        perror("ERROR: MemInfo file couldn't be accessed");
         return 2;
     }
 
     int cpu_fd = open("/proc/cpuinfo", O_RDONLY);
     if (cpu_fd < 0) 
     {
-        perror("ERRROR: CpuInfo file couldn't be accessed");
+        perror("ERROR: CpuInfo file couldn't be accessed");
         close(mem_fd);
         return 2;
     }
@@ -32,9 +38,30 @@ int main(void)
     int distro_fd = open("/etc/os-release", O_RDONLY);
     if (distro_fd < 0) 
     {
-        perror("ERRROR: os-release file couldn't be accessed");
+        perror("ERROR: os-release file couldn't be accessed");
         close(mem_fd);
         close(cpu_fd);
+        return 2;
+    }
+
+    int hostname_fd = open("/etc/hostname", O_RDONLY);
+    if (hostname_fd < 0) 
+    {
+        perror("ERROR: hostname file couldn't be accessed");
+        close(mem_fd);
+        close(cpu_fd);
+        close(distro_fd);
+        return 2;
+    }
+
+    int kernel_fd = open("/proc/version", O_RDONLY);
+    if (kernel_fd < 0)
+    {
+        perror("ERROR: version file couldn't be accessed");
+        close(mem_fd);
+        close(cpu_fd);
+        close(distro_fd);
+        close(hostname_fd);
         return 2;
     }
 
@@ -68,6 +95,58 @@ int main(void)
                 return 3;
         }
 
+        hostname_check = host_fetch(hostname_fd);
+        if (hostname_check == 1)
+        {
+                perror("filesize detection error (hostname)"); 
+                close(mem_fd);
+                close(cpu_fd);
+                close(distro_fd);
+                close (hostname_fd);
+                endwin();
+                return 3;
+        }
+        else if (hostname_check == 2)
+        {
+                perror("error finding username "); 
+                close(mem_fd);
+                close(cpu_fd);
+                close(distro_fd);
+                close (hostname_fd);
+                endwin();
+                return 4;
+
+        }
+
+        kernel_check = kernel_fetch(kernel_fd);
+        if (kernel_check == 1)
+        {
+                perror("filesize detection error (kernel version)"); 
+                close(mem_fd);
+                close(cpu_fd);
+                close(distro_fd);
+                close (hostname_fd);
+                close(kernel_fd);
+                endwin();
+                return 3;
+        }
+
+        disk_check = disk_fetch();
+        if (disk_check == 1)
+        {
+            perror("error with statvfs syscall"); 
+            close(mem_fd);
+            close(cpu_fd);
+            close(distro_fd);
+            close (hostname_fd);
+            close(kernel_fd);
+            endwin();
+            return 3;
+
+        }
+
+
+
         refresh();
         sleep(2);
     }
@@ -77,10 +156,7 @@ int main(void)
     close(mem_fd);
     close(cpu_fd);
     close(distro_fd);
-    int user_input = 0;
-    if ((user_input = getchar()) > 0)
-    {
-        endwin();
-    }    
+    endwin();
+
     return 0;
 }

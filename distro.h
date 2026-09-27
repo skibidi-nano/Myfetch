@@ -1,5 +1,6 @@
 #include "myfetch.h"
 
+int kernel_fetch(int fd);
 int distro_fetch(int fd);
 
 void distro_ascii(char *distro);

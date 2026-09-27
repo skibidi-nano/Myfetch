@@ -1,6 +1,49 @@
-#include "logo.h"
+#include "distro.h"
 
- 
+int kernel_fetch(int fd)
+{
+   char buffer[BUFFER_SIZE];
+   char line_buffer[SECONDARY_BUFFER_SIZE];
+   int line_buffer_index = 0;
+
+   char* print_string; 
+   int text_y = TEXT_Y_INIT + KERNEL_OFFSET;
+
+   lseek(fd, 0, SEEK_SET); // reset file descriptor
+
+   ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+   if (bytes_read <= 0) 
+   {
+      return 1;
+   }
+   buffer[bytes_read] = '\0';
+
+            
+   for (int i = 0; i < bytes_read; i++)
+   {
+      line_buffer[line_buffer_index] = buffer[i];
+      if(line_buffer[line_buffer_index] == '(')
+      {
+         line_buffer[line_buffer_index - 1] = '\0';
+         line_buffer_index = 0;
+
+         print_string = "Kernel version - ";
+         mvprintw(text_y, TEXT_X, "%s", print_string);
+
+         mvprintw(text_y, TEXT_X + strlen(print_string), "%s", line_buffer);
+
+         break;
+
+      }
+      else
+      {
+         line_buffer_index++;
+      }
+   } 
+
+   return 0;
+
+}
 
 int distro_fetch(int fd)
 {
@@ -75,10 +118,6 @@ int distro_fetch(int fd)
 
 
                
-
-
-               
-
                if (!strcmp(mappings[j].key, "PRETTY_NAME"))
                {
                   offset = mappings[j].y_offset; //manipulte the global offset (maybe overall change the offset concept)
@@ -137,7 +176,7 @@ char **nixos_ascii(void)
    static char *art[] = 
    {
       "     _   ___    _        ",
-      "    +o\\  \\  \\  / \\   ",
+      "    o\\  \\  \\  / \\   ",
       "    \\oo\\  \\  \\/  /   ",
       "  ,oo+oo+oo\\   ,/ +\\   ",
       " <oooooooooo\\  \\ /os;  ",

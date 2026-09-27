@@ -1,1 +1,1 @@
-void memory_fetch(int fd);
+int memory_fetch(int fd);
