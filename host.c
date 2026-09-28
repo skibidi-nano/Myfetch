@@ -5,6 +5,7 @@ int host_fetch(int fd)
 {
     char buffer[BUFFER_SIZE];
     char read_buffer[SECONDARY_BUFFER_SIZE];
+    int read_buffer_index = 0;
     char *print_string;
     int text_y = TEXT_Y_INIT + HOSTNAME_OFFSET;
     
@@ -22,8 +23,11 @@ int host_fetch(int fd)
 
     for (int i = 0; i < bytes_read; i++)
     {
-        read_buffer[i] = buffer[i];
+        read_buffer[read_buffer_index] = buffer[i];
+        read_buffer_index++;
     }
+
+    read_buffer[read_buffer_index] = '\0';
 
 
     print_string = "Hostname - ";

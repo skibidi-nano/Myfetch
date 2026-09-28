@@ -160,9 +160,17 @@ void distro_ascii(char *distro)
    {
       ascii_art = arch_ascii();
    }
+   else if(!strcmp(distro, "ubuntu"))
+   {
+      ascii_art = ubuntu_ascii();
+   }
+   else if(!strcmp(distro, "gentoo"))
+   {
+      ascii_art = gentoo_ascii();
+   }
    else
    {
-      return;
+      unsupported_ascii();
    }
 
    for (int i = 0; ascii_art[i] != NULL; i++) 
@@ -175,20 +183,24 @@ char **nixos_ascii(void)
 {
    static char *art[] = 
    {
-      "     _   ___    _        ",
-      "    o\\  \\  \\  / \\   ",
-      "    \\oo\\  \\  \\/  /   ",
-      "  ,oo+oo+oo\\   ,/ +\\   ",
-      " <oooooooooo\\  \\ /os;  ",
-      "     /``/    \\  ,oo/    ",
-      ",---'  /      \\,        ",
-      "\\__   ;s      /oo/      ",
-      "  /  /so\\____/ss/____   ",
-      " `, / \\oo\\   ```     / ",
-      "  \\/ /sooo\\--.  .---`  ",
-      "    /so/\\oo\\  \\  \\   ",
-      "    \\o/  \\s+\\  \\_/   ",
-      "          ```            ",
+                                       
+   "           __    ____    __           ",
+   "          /  \\   \\   \\  /  \\         ",
+   "          \\   \\   \\   \\/   /          ", 
+   "        ___\\   \\___\\      /           ",
+   "       /            \\    /   /\\      ",
+   "      /______________\\   \\  /  \\     ",
+   "           /   /      \\   \\/   /      ",
+   "    ______/   /        \\  /   /___    ",
+   "   /         /          \\/        \\  ",
+   "   \\____    /\\          /   ______/   ",
+   "       /   /  \\        /   /          ",
+   "      /   /\\   \\______/___/_____      ",
+   "      \\  /  \\   \\              /      ",
+   "       \\/   /    \\____    ____/       ",
+   "           /      \\   \\   \\          ",
+   "          /   /\\   \\   \\   \\         ",
+   "          \\__/  \\___\\   \\__/          ",
       NULL
    };
    
@@ -246,3 +258,82 @@ char **arch_ascii(void)
    
    return art;
 }
+
+char **ubuntu_ascii(void) // NEEDS REWORK TOO LARGE //////////////////////////////////////////////////////////////////////////////
+{
+   static char *art[] = 
+   {
+   "                                   ....",
+   "                .',:clooo:  .:looooo:.",
+   "             .;looooooooc  .oooooooooo'",
+   "          .;looooool:,''.  :ooooooooooc ",
+   "         ;looool;.         'oooooooooo, ",
+   "        ;clool'             .cooooooc.  ,, ",
+   "          ...                ......  .:oo,  ",
+   "   .;clol:,.                        .loooo' ",
+   "  :ooooooooo,                        'ooool ",
+   "'ooooooooooo.                        loooo.",
+   "'ooooooooool                         coooo.",
+   " ,loooooooc.                        .loooo.",
+   "   .,;;;'.                          ;ooooc  ",
+   "       ...                         ,ooool.",
+   "    .cooooc.              ..',,'.  .cooo. ",
+   "      ;ooooo:.           ;oooooooc.  :l. ",
+   "       .coooooc,..      coooooooooo. ",
+   "         .:ooooooolc:. .ooooooooooo' ",
+   "           .':loooooo;  ,oooooooooc ",
+   "               ..';::c'  .;loooo:' ",
+      NULL
+   };
+
+   return art;
+}
+
+char **gentoo_ascii(void)
+{
+   static char *art[] = 
+   {
+   "            -/oyddmdhs+:.                ",
+   "        -odNMMMMMMMMNNmhy+-`             ",
+   "      -yNMMMMMMMMMMMNNNmmdhy+-           ",
+   "    `omMMMMMMMMMMMMNmdmmmmddhhy/`        ",
+   "    omMMMMMMMMMMMNhhyyyohmdddhhhdo`      ",
+   "   .ydMMMMMMMMMMdhs++so/smdddhhhhdm+`    ",
+   "    oyhdmNMMMMMMMNdyooydmddddhhhhyhNd.   ",
+   "     :oyhhdNNMMMMMMMNNNmmdddhhhhhyymMh   ",
+   "       .:+sydNMMMMMNNNmmmdddhhhhhhmMmy   ",
+   "          /mMMMMMMNNNmmmdddhhhhhmMNhs:   ",
+   "       `oNMMMMMMMNNNmmmddddhhdmMNhs+`    ",
+   "     `sNMMMMMMMMNNNmmmdddddmNMmhs/.      ",
+   "    /NMMMMMMMMNNNNmmmdddmNMNdso:`        ",
+   "   +MMMMMMMNNNNNmmmmdmNMNdso/-           ",
+   "   yMMNNNNNNNmmmmmNNMmhs+/-`             ",
+   "   /hMMNNNNNNNNMNdhs++/-`                ",
+   "   `/ohdmmddhys+++/:.`                   ",
+   "     `-//////:--.                        ",
+      NULL
+   };
+
+  return art;
+}
+
+char **unsupported_ascii(void)
+{
+   static char *art[] =
+   { 
+   "         <My distro is doesn't             ",
+   "          have an ASCII :( > ",
+   "   ___        /      ",
+   "   (.. \\    /       ",
+   "   (<> |            ",
+   "  //  \\ \\         ",
+   " ( |  | /|          ",
+   "_/\\ __)/_)         ",
+   "\\/-____\\/         ",
+      NULL
+   };
+
+   return art;
+}
+
+

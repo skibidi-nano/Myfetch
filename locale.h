@@ -1,0 +1,1 @@
+int locale_fetch(int fd);

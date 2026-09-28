@@ -13,11 +13,29 @@
 
 
 static int offset = 0;
-typedef struct {
+
+typedef struct 
+{
     char *key;
     char *label;
     int y_offset;
-} parse_mapping;
+}
+parse_mapping;
+
+typedef struct
+{
+    int mem;
+    int cpu;
+    int distro;
+    int hostname;
+    int kernel;
+    int locale;
+
+}
+file_descriptor;
+
+
+void cleanup(void);
 
 
 #define BUFFER_SIZE 2048
@@ -40,6 +58,7 @@ typedef struct {
 #define SWAP_FREE_OFFSET 9
 #define DISK_OFFSET 10
 #define AVAILABLE_DISK_OFFSET 11
+#define LOCALE_OFFSET 12
 
 #define NO_OFFSET 0
 
