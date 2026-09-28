@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -ggdb3 -O1 -std=c23 -Wall -Wextra -Werror -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow -MMD -MP -Wall -Wextra
+CFLAGS = -ggdb3 -O1 -std=c23 -Wall -Wextra -Werror -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow -MMD -MP -Wall -Wextra -g
 LDLIBS = -lm -lc -lncurses
 
 SRCS = $(wildcard *.c)

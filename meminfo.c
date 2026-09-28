@@ -11,7 +11,7 @@ int memory_fetch(int fd)
     int read_buffer_index = 0;
 
     int strlength;
-    int length_string_buffer;
+    //int length_string_buffer;
 
     char* print_string; 
     int text_y = 0;
@@ -21,8 +21,7 @@ int memory_fetch(int fd)
     {
     //Codeword    Whats printed      y-offset
     //.key         .label        .offset
-    {"MemTotal:      ",  "Total memory - ", MEM_TOTAL_OFFSET},
-    {"MemFree:         ",   "Free memory - ",  MEM_FREE_OFFSET},
+    {"MemTotal",  "Total memory - ", MEM_TOTAL_OFFSET},
     {"Cached",    "Cached memory - ",CACHED_OFFSET},
     {"SwapTotal", "Total swap - ",   SWAP_TOTAL_OFFSET},
     {"SwapFree",  "Free swap - ",    SWAP_FREE_OFFSET}
@@ -51,11 +50,13 @@ int memory_fetch(int fd)
             strlength = strlen(line_buffer);
             for (int j = 0; j < strlength; j++)
             {
-                string_buffer[j] = line_buffer[j];
-
-                if(isdigit(string_buffer[j]))
+                if(isalpha(line_buffer[j]))
                 {
-                    string_buffer[j - 1] = '\0';
+                    string_buffer[j] = line_buffer[j];
+                }
+                else if(line_buffer[j] == ':')
+                {
+                    string_buffer[j] = '\0';
                     break;
                 }
             }
@@ -66,18 +67,28 @@ int memory_fetch(int fd)
 
                 if(!strcmp(string_buffer, mappings[j].key))
                 {
-                    strlength = (strlen(line_buffer) - strlen(string_buffer));
-                    length_string_buffer = strlen(string_buffer);
+                    //strlength = (strlen(line_buffer) - strlen(string_buffer));
+                    //length_string_buffer = strlen(string_buffer);
+                    int size = sizeof(read_buffer);
+                    for (int k = 0; k < size; k++)
+                    {
+                        read_buffer[k] = 0;
+                    }
                     for (int k = 0; k < strlength; k++)
                     {
-                        if(isdigit(read_buffer[read_buffer_index]))
+                        if(isdigit(line_buffer[k]))
                         {
-                            read_buffer[read_buffer_index] = line_buffer[k + length_string_buffer];
+                            read_buffer[read_buffer_index] = line_buffer[k];
                             read_buffer_index++;
+                        }
+                        else if (isblank(line_buffer[k] && isalpha(line_buffer[k + 1])))
+                        {
+                            break;
                         }
                     }
 
-                    read_buffer[strlength] = '\0';
+                    read_buffer[read_buffer_index] = '\0';
+                    read_buffer_index = 0;
 
 
                     offset = mappings[j].y_offset; //manipulte the global offset (maybe overall change the offset concept)
@@ -87,10 +98,10 @@ int memory_fetch(int fd)
                     print_string = mappings[j].label;
                     mvprintw(text_y, TEXT_X, "%s", print_string);
 
-                    int amount = atoi(read_buffer);
+                    float amount = atoi(read_buffer);
                     amount = amount / 1048576;
 
-                    mvprintw(text_y, TEXT_X + strlen(print_string), "%i", amount);
+                    mvprintw(text_y, TEXT_X + strlen(print_string), "%.2f GiB", amount);
                             
                 }
             }
