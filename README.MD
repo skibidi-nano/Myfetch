@@ -2,6 +2,8 @@
 
 ## A FETCHING PROGRAM COMPLETELY BUILT IN C THAT TRACKS LIVE STATS
 
+![demo.png](/pictures/demo.png)
+
 ## KEY FEATURES
 
 Displays the following:
