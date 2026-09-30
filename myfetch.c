@@ -5,6 +5,8 @@
 #include "host.h"
 #include "disk.h"
 #include "locale.h"
+#include "ip.h"
+#include "shell.h"
 
 file_descriptor fd;
 
@@ -17,10 +19,13 @@ int main(void)
     int kernel_check = 0;
     int disk_check = 0;
     int locale_check = 0;
+    int uptime_check = 0;
+    int shell_check = 0;
 
     initscr();
     cbreak();
     noecho();
+    curs_set(0);
 
     fd.mem = open("/proc/meminfo", O_RDONLY);
     if (fd.mem < 0) 
@@ -38,7 +43,7 @@ int main(void)
     }
 
     fd.distro = open("/etc/os-release", O_RDONLY);
-    if (fd.kernel < 0) 
+    if (fd.distro < 0) 
     {
         perror("ERROR: os-release file couldn't be accessed");
         close(fd.mem);
@@ -76,9 +81,22 @@ int main(void)
         return 2;
     }
 
+    fd.uptime = open("/proc/uptime", O_RDONLY);
+    if (fd.uptime < 0) 
+    {
+        perror("ERROR: /proc/uptime file couldn't be accessed");
+        close(fd.mem);
+        close(fd.cpu);
+        close(fd.distro);
+        close (fd.hostname);
+        close(fd.kernel);
+        close(fd.locale);
+        return 2;
+    }
+
     while (true)
     {
-        clear();
+        
         if (lseek(fd.mem, 0, SEEK_SET) == (off_t)-1) {
             perror("lseek failed");
             break;
@@ -143,6 +161,25 @@ int main(void)
 
         }
 
+        uptime_check = uptime_fetch(fd.uptime);
+        if (uptime_check == 1)
+        {
+            perror("filesize detection error (/proc/uptime)"); 
+            cleanup();
+            return 3;
+
+        }
+
+        ip_fetch();
+
+        shell_check = shell_fetch();
+        if (shell_check == 1)
+        {
+            perror("shell detection error");
+            cleanup();
+            return 3;
+        }
+
         refresh();
         sleep(2);
     }
@@ -161,5 +198,6 @@ void cleanup(void)
     close (fd.hostname);
     close(fd.kernel);
     close(fd.locale);
+    close(fd.uptime);
     endwin();
 }

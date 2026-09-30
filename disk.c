@@ -22,7 +22,7 @@ int disk_fetch(void)
         text_y = TEXT_Y_INIT + AVAILABLE_DISK_OFFSET;
         print_string = "Available space - ";
         mvprintw(text_y, TEXT_X, "%s", print_string);
-        total_bytes = (double)vfs.f_bfree * vfs.f_frsize;
+        total_bytes = (double)vfs.f_bavail * vfs.f_frsize;
         double current_space = total_bytes / 1073741824.0;
         mvprintw(text_y, TEXT_X + strlen(print_string), "%.2f GiB", current_space);
     }

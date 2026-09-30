@@ -170,7 +170,7 @@ void distro_ascii(char *distro)
    }
    else
    {
-      unsupported_ascii();
+      ascii_art = unsupported_ascii();
    }
 
    for (int i = 0; ascii_art[i] != NULL; i++) 
@@ -263,26 +263,21 @@ char **ubuntu_ascii(void) // NEEDS REWORK TOO LARGE ////////////////////////////
 {
    static char *art[] = 
    {
-   "                                   ....",
-   "                .',:clooo:  .:looooo:.",
-   "             .;looooooooc  .oooooooooo'",
-   "          .;looooool:,''.  :ooooooooooc ",
-   "         ;looool;.         'oooooooooo, ",
-   "        ;clool'             .cooooooc.  ,, ",
-   "          ...                ......  .:oo,  ",
-   "   .;clol:,.                        .loooo' ",
-   "  :ooooooooo,                        'ooool ",
-   "'ooooooooooo.                        loooo.",
-   "'ooooooooool                         coooo.",
-   " ,loooooooc.                        .loooo.",
-   "   .,;;;'.                          ;ooooc  ",
-   "       ...                         ,ooool.",
-   "    .cooooc.              ..',,'.  .cooo. ",
-   "      ;ooooo:.           ;oooooooc.  :l. ",
-   "       .coooooc,..      coooooooooo. ",
-   "         .:ooooooolc:. .ooooooooooo' ",
-   "           .':loooooo;  ,oooooooooc ",
-   "               ..';::c'  .;loooo:' ",
+   "                           \"\"",
+   "               B@@@@@P    @@@@@",
+   "            g@@@@@@@@@@A \"@@@@F",
+   "         _@L '@BBBBBBBB@@_",
+   "        ,@@@@'          \"@@@@",
+   "        ,@@@F             \\@@@",
+   "   _gg__ @@F               \\@@@",
+   "   @@@@@  @",
+   "   ++BP+  g@l                /@@@",
+   "        '@@@L              _@@@/",
+   "         '@@@@            _@@@@'",
+   "           <@F  '@ggggg@@P\" \"",
+   "                B@@@@@P _@@@_",
+   "                        @@@@@",
+   "                         \"",
       NULL
    };
 

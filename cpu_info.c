@@ -33,90 +33,86 @@ int cpu_fetch(int fd)
         return 1;
     }
 
-    if (filesize > 2048)
+    double iterations = ceil(filesize / size_buffer);
+    for (int iteration = 0; iteration < iterations; iteration++)
     {
-        double iterations = round(filesize / size_buffer);
-        for (int iteration = 0; iteration < iterations; iteration++)
+        //lseek(fd, 0, SEEK_SET); // reset file descriptor
+        ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+        if (bytes_read <= 0) 
         {
-            ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
-            if (bytes_read <= 0) 
-            {
-                return 1;
-            }
-            buffer[bytes_read] = '\0';
+            return 1;
+        }
+        buffer[bytes_read] = '\0';
 
             
-            for (int i = 0; i < bytes_read; i++)
+        for (int i = 0; i < bytes_read; i++)
+        {
+            line_buffer[line_buffer_index] = buffer[i];
+
+            if(line_buffer[line_buffer_index] == '\n')
             {
-                line_buffer[line_buffer_index] = buffer[i];
+                line_buffer[line_buffer_index] = '\0';
+                line_buffer_index = 0;
 
-                if(line_buffer[line_buffer_index] == '\n')
+                strlength = strlen(line_buffer);
+                for (int j = 0; j < strlength; j++)
                 {
-                    line_buffer[line_buffer_index] = '\0';
-                    line_buffer_index = 0;
+                    string_buffer[j] = line_buffer[j];
 
-                    strlength = strlen(line_buffer);
-                    for (int j = 0; j < strlength; j++)
+                    if(string_buffer[j] == ':')
                     {
                         string_buffer[j] = line_buffer[j];
-
-                        if(string_buffer[j] == ':')
-                        {
-                            string_buffer[j] = line_buffer[j];
-                            string_buffer[j + 1] = '\0';
-                            break;
-                        }
+                        string_buffer[j + 1] = '\0';
+                        break;
                     }
+                }
                 
 
-                    for (int j = 0; j < num_mappings; j++)
+                for (int j = 0; j < num_mappings; j++)
+                {
+
+                    if(!strcmp(string_buffer, mappings[j].key))
                     {
-
-                        if(!strcmp(string_buffer, mappings[j].key))
+                        strlength = (strlen(line_buffer) - strlen(string_buffer));
+                        length_string_buffer = strlen(string_buffer);
+                        for (int k = 0; k < strlength; k++)
                         {
-                            strlength = (strlen(line_buffer) - strlen(string_buffer));
-                            length_string_buffer = strlen(string_buffer);
-                            for (int k = 0; k < strlength; k++)
-                            {
-                                read_buffer[k] = line_buffer[k + length_string_buffer];
-                            }
+                            read_buffer[k] = line_buffer[k + length_string_buffer];
+                        }
 
-                            read_buffer[strlength] = '\0';
+                        read_buffer[strlength] = '\0';
 
 
                             offset = mappings[j].y_offset; //manipulte the global offset (maybe overall change the offset concept)
                             text_y = TEXT_Y_INIT + offset; // calculate the y variable
 
 
-                            print_string = mappings[j].label;
-                            mvprintw(text_y, TEXT_X, "%s", print_string);
+                        print_string = mappings[j].label;
+                        mvprintw(text_y, TEXT_X, "%s", print_string);
 
-                            if (!strcmp(mappings[j].label, "Threads - "))
-                            {
-                                int cores = atoi(read_buffer); 
-                                cores++;
-                                mvprintw(text_y, TEXT_X + strlen(print_string), "%i", cores);
-                            }
-                            else
-                            {
-                                mvprintw(text_y, TEXT_X + strlen(print_string), "%s", read_buffer);
-                            }
-                            
+                        if (!strcmp(mappings[j].label, "Threads - "))
+                        {
+                            int cores = atoi(read_buffer); 
+                            cores++;
+                            mvprintw(text_y, TEXT_X + strlen(print_string), "%i", cores);
                         }
+                        else
+                        {
+                            mvprintw(text_y, TEXT_X + strlen(print_string), "%s", read_buffer);
+                        }
+                            
                     }
                 }
-                else
-                {
-                    line_buffer_index++;
-                }
-                
             }
+            else
+            {
+                line_buffer_index++;
+            }
+                
         }
     }
     
 
-    
-
-
     return 0;
+    
 }

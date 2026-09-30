@@ -46,3 +46,44 @@ int host_fetch(int fd)
 
     return 0;
 }
+
+int uptime_fetch(int fd)
+{
+    char buffer[BUFFER_SIZE];
+    char read_buffer[SECONDARY_BUFFER_SIZE];
+    int read_buffer_index = 0;
+    char *print_string;
+    int text_y = TEXT_Y_INIT + UPTIME_OFFSET;
+
+    lseek(fd, 0, SEEK_SET); // reset file descriptor
+
+    ssize_t bytes_read = read(fd, buffer, sizeof(buffer) - 1);
+    if (bytes_read <= 0) 
+    {
+      return 1;
+    }
+    buffer[bytes_read] = '\0';
+
+    for (int i = 0; i < bytes_read; i++)
+    {
+        if (buffer[i] == ' ')
+        {
+            read_buffer[read_buffer_index] = '\0';
+            break;
+        }
+        read_buffer[read_buffer_index] = buffer[i];
+        read_buffer_index++;
+    }
+
+    float uptime = atoi(read_buffer);
+    uptime /= 60;
+    uptime /=60;
+
+    print_string = "Uptime - ";
+    mvprintw(text_y, TEXT_X, "%s", print_string);
+
+    mvprintw(text_y, TEXT_X + strlen(print_string), "%.2f hours", uptime);
+
+    return 0;
+    
+}

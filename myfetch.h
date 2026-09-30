@@ -30,6 +30,7 @@ typedef struct
     int hostname;
     int kernel;
     int locale;
+    int uptime;
 
 }
 file_descriptor;
@@ -59,6 +60,9 @@ void cleanup(void);
 #define DISK_OFFSET 10
 #define AVAILABLE_DISK_OFFSET 11
 #define LOCALE_OFFSET 12
+#define UPTIME_OFFSET 13
+#define IP_OFFSET 14
+#define SHELL_OFFSET 15
 
 #define NO_OFFSET 0
 

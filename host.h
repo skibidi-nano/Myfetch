@@ -3,3 +3,4 @@
 #include <pwd.h>
 
 int host_fetch(int fd);
+int uptime_fetch(int fd);
