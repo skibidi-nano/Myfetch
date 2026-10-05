@@ -30,7 +30,9 @@ You will need the following packages:
   - ncurses
 
 NOTE: 
-If on nixos you can use my shell.nix also in the project files
+- If on nixos you can use my shell.nix also in the project files
+- ALSO if precompiled build fails (probably because your ncurses is on a newer verson, normal for rolling release distros), you will need to compile it yourself.
+- Build was tested on fedora and nixos
 
 The Makefile is included. Move into the project folder:
 
