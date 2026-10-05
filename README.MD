@@ -31,7 +31,7 @@ You will need the following packages:
 
 NOTE: 
 - If on nixos you can use my shell.nix also in the project files
-- ALSO if precompiled build fails (probably because your ncurses is on a newer verson, normal for rolling release distros), you will need to compile it yourself.
+- ALSO if precompiled build fails (probably ncurses version, check it, if its not ncurses 6 download version 6), you will need to compile it yourself.
 - Build was tested on fedora and nixos
 
 The Makefile is included. Move into the project folder:
