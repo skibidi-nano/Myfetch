@@ -27,7 +27,9 @@ Displays the following:
 You will need the following packages:
   - clang
   - gnumake
-  - ncurses
+
+NOTE: 
+        - If on nixos you can use my shell.nix also in the project files
 
 The Makefile is included. Move into the project folder:
 
