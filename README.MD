@@ -29,9 +29,6 @@ You will need the following packages:
   - gnumake
   - ncurses
 
-NOTE: 
-If on nixos you can use my shell.nix also in the project files
-
 The Makefile is included. Move into the project folder:
 
     make main
