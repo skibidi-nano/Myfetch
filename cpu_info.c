@@ -67,7 +67,7 @@ int cpu_fetch(int fd)
                     }
                 }
                 
-
+                
                 for (int j = 0; j < num_mappings; j++)
                 {
 
